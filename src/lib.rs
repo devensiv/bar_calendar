@@ -1,6 +1,6 @@
 use chrono::{Duration, Utc};
-use duration::format_duration;
 use entry::*;
+use event::Event;
 use std::error::Error;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
@@ -8,8 +8,9 @@ use std::path::PathBuf;
 
 mod duration;
 mod entry;
+mod event;
 
-pub fn next_calendar_event(configfile: PathBuf) -> Result<String, Box<dyn Error>> {
+pub fn next_calendar_event(configfile: PathBuf) -> Result<Event, Box<dyn Error>> {
     let now = Utc::now();
     let reader = BufReader::new(File::open(configfile)?);
     for line in reader.lines() {
@@ -33,13 +34,17 @@ pub fn next_calendar_event(configfile: PathBuf) -> Result<String, Box<dyn Error>
                 61..=120 => "Info".to_string(),
                 _ => "Idle".to_string(),
             };
-            return Ok(format!(
-                "{{\"icon\": \"calendar\", \"state\": \"{}\", \"text\": \"{} in {}\"}}",
-                state,
-                event.note,
-                format_duration(duration),
-            ));
+            return Ok(Event {
+                text: event.note,
+                time_until: duration,
+                state: state,
+            });
         }
     }
-    Ok("{\"icon\": \"calendar\", \"state\": \"Critical\", \"text\": \"None\"}".to_string())
+
+    Ok(Event {
+        text: "No Events".to_string(),
+        state: "Good".to_string(),
+        time_until: Duration::seconds(0),
+    })
 }

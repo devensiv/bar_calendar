@@ -10,6 +10,6 @@ fn main() -> Result<(), Box<dyn Error>> {
     let calendar_text;
     calendar_text = next_calendar_event(options.filepath)?;
 
-    println!("{}", calendar_text);
+    println!("{}", calendar_text.format(options.json));
     Ok(())
 }

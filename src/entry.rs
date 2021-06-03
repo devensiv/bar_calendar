@@ -1,6 +1,7 @@
 use chrono::{DateTime, Utc};
 use std::error::Error;
 
+#[derive(Debug)]
 pub struct Entry {
     pub note: String,
     pub description: String,

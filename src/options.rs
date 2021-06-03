@@ -1,6 +1,7 @@
 use std::env::Args;
 use std::path::PathBuf;
 
+#[derive(Debug)]
 pub struct Options {
     pub json: bool,
     pub filepath: PathBuf,
@@ -10,7 +11,7 @@ impl Options {
     /// create an instance of Options from the command line arguments
     pub fn new(args: Args) -> Options {
         let mut options = Options {
-            json: false,
+            json: true,
             filepath: dirs::config_dir().unwrap().join("bar_calendar/config.conf"),
         };
 
