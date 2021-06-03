@@ -1,14 +1,14 @@
 use chrono::{DateTime, Utc};
 use std::error::Error;
 
-pub struct Event {
+pub struct Entry {
     pub note: String,
     pub description: String,
     pub date: DateTime<Utc>,
 }
 
-impl Event {
-    pub fn from_string(data: &str, now: &DateTime<Utc>) -> Result<Event, Box<dyn Error>> {
+impl Entry {
+    pub fn from_string(data: &str, now: &DateTime<Utc>) -> Result<Entry, Box<dyn Error>> {
         let mut parts = data.split_whitespace();
         let mut date_string = String::new();
 
@@ -96,7 +96,7 @@ impl Event {
         }?
         .with_timezone(&Utc);
 
-        Ok(Event {
+        Ok(Entry {
             note: parts.next().unwrap_or("No Note").to_string(),
             description: parts.next().unwrap_or("No description").to_string(),
             date,

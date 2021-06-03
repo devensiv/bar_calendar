@@ -1,13 +1,13 @@
 use chrono::{Duration, Utc};
 use duration::format_duration;
-use event::*;
+use entry::*;
 use std::error::Error;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::PathBuf;
 
 mod duration;
-mod event;
+mod entry;
 
 pub fn next_calendar_event(configfile: PathBuf) -> Result<String, Box<dyn Error>> {
     let now = Utc::now();
@@ -21,7 +21,7 @@ pub fn next_calendar_event(configfile: PathBuf) -> Result<String, Box<dyn Error>
         }
 
         // create event from that line
-        let event = Event::from_string(&line, &now)?;
+        let event = Entry::from_string(&line, &now)?;
 
         // format output
         let duration = event.date.signed_duration_since(now);
