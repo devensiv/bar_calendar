@@ -1,19 +1,15 @@
 use bar_calendar::*;
-use dirs;
+use options::Options;
 use std::env;
 use std::error::Error;
-use std::path::PathBuf;
+
+mod options;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let mut args = env::args().skip(1);
+    let options = Options::new(env::args());
     let calendar_text;
-    if let Some(filename) = args.next() {
-        calendar_text = next_calendar_event(PathBuf::from(filename))?;
-    } else {
-        calendar_text =
-            next_calendar_event(dirs::config_dir().unwrap().join("bar_calendar/config.conf"))?;
-    }
+    calendar_text = next_calendar_event(options.filepath)?;
 
-    println!("{}", calendar_text);
+    println!("{}", calendar_text.format(options.json));
     Ok(())
 }
