@@ -22,13 +22,17 @@ pub fn next_calendar_event(configfile: PathBuf) -> Result<Event, Box<dyn Error>>
             continue;
         }
 
-        // create event from that line
-        let event = Entry::from_string(&line, &now)?;
+        // create entry from that line
+        let mut entry = Entry::from_string(&line, &now)?;
 
         // format output
-        let duration = event.date.signed_duration_since(now);
-        if (duration > Duration::seconds(0)) & (duration < closest.0) {
-            closest = (duration, Some(event));
+        let mut duration = entry.date.signed_duration_since(now); //positive duration means the entry lies in the future
+        if duration < Duration::seconds(0) && !entry.resolve_wildcards(now, &mut duration) {
+            continue;
+        } //continue if all possible events of this entry are in the past
+
+        if duration < closest.0 {
+            closest = (duration, Some(entry));
         }
     }
 
