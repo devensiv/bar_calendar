@@ -30,6 +30,32 @@ interval = 60
 |macOS|$HOME/Library/Application Support|/Users/Alice/Library/Application Support|
 |Windows|{FOLDERID_RoamingAppData}|C:\Users\Alice\AppData\Roaming|
 
+# Configuration
+In the config file every line represents an event. The lines have to be formatted as one of the following: 
+1. ``%:z %Y "m" %b %d	%R <Name>	[<Description>]`` or (e.g. ``+02:00 2021 m Jun 27	12:00 Example1 optional description``)
+2. ``%:z %Y "w" %W %a	%R <Name>	[<Description>]`` (e.g. ``+02:00 2021 w	05 Mon	21:00 Example2	another optional description``)
+3. Lines starting with ``#`` as well as empty lines are ingnored in the parsing of events.
+
+|``%`` specifier|Example|Description|Wildcard options|
+|---------------|-------|-----------|----------------|
+|``%:z``|``+02+00``, ``+00:00``|Time zone offset from UTC (+00:00 is UTC)|Wildcards are not allowed for the timezone|
+|``%Y``|``2020``, ``2021``, ``*``|The full proleptic Gregorian year, zero-padded to 4 digits|Can be ``*`` -> every year|
+|``%b``|``Jan``, ``Dec``, ``*``|Abbreviated month name. 3 letters.|Can be ``*`` -> every month|
+|``%d``|``01``, ``24``, ``*``|Day number (01--31), zero-padded to 2 digits.| Can be ``*`` -> every day of the month|
+|``%W``|``01``, ``15``, ``*``|Calendar week (week starting with monday)|Can be ``*`` -> every week of the year|
+|``%a``|``Mon``, ``Fri``, ``*``|Abbreviated weekday name. 3 letters.|Can be ``*`` -> every day of the week|
+|``%R``|``03:00``, ``17:30``, ``*:30``, ``12:*``|24 hour-minute format|Hour part can be ``*`` -> every hour of the day at given minute,<br/>Minute part can be ``*`` -> every minute of the hour,<br/>Both can be ``*`` (``*:*``) -> every minute of the day|
+
+All parts are seperated by any ammount/type of whitespace you want to use -> you can format your config file to look organized using tabs and spaces.
+
+You decide whether the date you put in is parsed in 1. "month_mode" or 2. "week_mode" by setting the 3rd parameter either to 1.``m`` or 2.``w`` which changes the parsing pattern as shown above.
+
+You may combine any number of wildcard options with eachother.
+## Examples
+- ``+02:00 2021 m Jun * 19:00 daily`` -> every day of June at 19:00 in 2021
+- ``+02:00 * m Jun * 19:00 daily`` -> every day of June at 19:00 each year
+- ``+02:00 * m * * 19:00 daily`` -> every day at 19:00 of every month each year
+
 # Options
 Usage: ``bar_calendar [path] [options]``
 
