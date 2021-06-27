@@ -8,7 +8,7 @@ Intended for use in a bar.
 3. Alternatively to 2. you can clone the repository move into ``bar_calendar/`` in order to run ``cargo install --path .``. This has the same effect as 2. but you are not building in a temporary target directory
 
 ## Updating
-You can update your installation by re running the cargo install command.
+You can update your installation by re running the cargo install command. (or pulling changes before if you went with 3.)
 
 # Setup
 1. Create a config file in your systems config directory ``<your_config_dir>/bar_calendar/config.conf`` (you can use different file locations by giving the path as command line argument to the program)
