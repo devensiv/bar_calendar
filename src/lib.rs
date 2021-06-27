@@ -18,7 +18,7 @@ pub fn next_calendar_event(configfile: PathBuf) -> Result<Event, Box<dyn Error>>
         let line = line?;
 
         // Ignore comments
-        if line.starts_with("#") {
+        if line.starts_with("#") | (line == "") {
             continue;
         }
 
