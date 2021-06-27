@@ -64,7 +64,7 @@ impl Entry {
 
         // month mode
         if !weekformat {
-            // Month with %m (01..=12)
+            // Month with %b (Jun..=Dec)
             if let Some(entry) = parts.next() {
                 match entry {
                     "*" => {
