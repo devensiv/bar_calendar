@@ -52,7 +52,7 @@ impl Entry {
         }
         date_string.push(' ');
 
-        // parse mode (month mode or week mode)
+        // parse mode (month_mode or week_mode)
         let weekformat = match parts.next() {
             Some(mode) => match mode {
                 "m" => false,
@@ -62,7 +62,7 @@ impl Entry {
             None => Err("No mode indicator")?,
         };
 
-        // month mode
+        // month_mode
         if !weekformat {
             // Month with %b (Jun..=Dec)
             if let Some(entry) = parts.next() {
@@ -100,7 +100,7 @@ impl Entry {
             }
             date_string.push(' ');
         }
-        // week mode
+        // week_mode
         else {
             // Week with %W (1..=52)
             if let Some(entry) = parts.next() {
@@ -169,9 +169,9 @@ impl Entry {
         }
 
         let date = if weekformat {
-            DateTime::parse_from_str(&date_string, "%z %Y %W %a %R")
+            DateTime::parse_from_str(&date_string, "%:z %Y %W %a %R")
         } else {
-            DateTime::parse_from_str(&date_string, "%z %Y %b %d %R")
+            DateTime::parse_from_str(&date_string, "%:z %Y %b %d %R")
         }
         .map_err(|_| {
             format!(
