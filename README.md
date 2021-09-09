@@ -49,6 +49,7 @@ In the config file every line represents an event. The lines have to be formatte
 Durations are provided as follows ``<Fmt><Num>`` (e.g. s10 -> 10 seconds) where <Fmt> is one of ``s, m, h, d`` and num any positive integer (32 bit uint)
 
 |Fmt|Meaning|
+|---|-------|
 |s|Seconds|
 |m|Minutes|
 |h|Hours|
