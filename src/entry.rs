@@ -4,8 +4,8 @@ use std::error::Error;
 #[derive(Clone)]
 pub struct Entry {
     pub note: String,
-    pub description: String,
     pub date: DateTime<Utc>,
+    pub duration: Duration,
     mod_stack: Vec<fn(&DateTime<Utc>, &DateTime<Utc>) -> DateTime<Utc>>,
 }
 
@@ -181,11 +181,30 @@ impl Entry {
             )
         })?
         .with_timezone(&Utc);
+
+        let note = parts.next();
+
+        let duration = match parts.next() {
+            Some(pattern) => {
+                let mut chars = pattern.chars();
+                let indicator = chars.next();
+                let num = chars.collect::<String>().parse::<i64>()?;
+                match indicator {
+                    Some('s') => Duration::seconds(num),
+                    Some('m') => Duration::minutes(num),
+                    Some('h') => Duration::hours(num),
+                    Some('d') => Duration::days(num),
+                    _ => Err("Invalid duration indicator")?,
+                }
+            }
+            None => Duration::seconds(0),
+        };
+
         Ok(Entry {
-            note: parts.next().unwrap_or("No Note").to_string(),
-            description: parts.next().unwrap_or("No description").to_string(),
+            note: note.unwrap_or("No Note").to_string(),
             date,
             mod_stack: wildcard_offset,
+            duration: duration,
         })
     }
 }
