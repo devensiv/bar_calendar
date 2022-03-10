@@ -71,6 +71,9 @@ You may combine any number of wildcard options with eachother.
 # Options
 Usage: ``bar_calendar [path] [options]``
 
+ ``--version``
+    Prints the current version of the program and a link to this repo. Using --version bypasses the normal functionality of the program and the version info will be the only output generated.
+
  ``--json``
     Provides output in json format (default) (e.g. ``{"icon": "calendar", "state": "Idle", "text": "Eventname in 20 min"})``)
     

@@ -3,6 +3,7 @@ use std::path::PathBuf;
 
 #[derive(Debug)]
 pub struct Options {
+    pub version: bool,
     pub json: bool,
     pub filepath: PathBuf,
 }
@@ -11,6 +12,7 @@ impl Options {
     /// create an instance of Options from the command line arguments
     pub fn new(args: Args) -> Options {
         let mut options = Options {
+            version: false,
             json: true,
             filepath: dirs::config_dir().unwrap().join("bar_calendar/config.conf"),
         };
@@ -27,6 +29,7 @@ impl Options {
         match argument {
             "--json" => options.json = true,
             "--no-json" => options.json = false,
+            "--version" => options.version = true,
             _ => options.filepath = PathBuf::from(argument),
         }
     }
