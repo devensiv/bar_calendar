@@ -18,7 +18,7 @@ pub fn next_calendar_event(configfile: PathBuf) -> Result<Event, Box<dyn Error>>
         let line = line?;
 
         // Ignore comments
-        if line.starts_with("#") | (line == "") {
+        if line.starts_with('#') | line.is_empty() {
             continue;
         }
 
@@ -47,7 +47,7 @@ pub fn next_calendar_event(configfile: PathBuf) -> Result<Event, Box<dyn Error>>
         return Ok(Event {
             text: event.note,
             time_until: closest.0,
-            state: state,
+            state,
         });
     }
 

@@ -1,19 +1,21 @@
 use chrono::{DateTime, Datelike, Duration, Utc};
 use std::error::Error;
 
+type DateMod = fn(&DateTime<Utc>, &DateTime<Utc>) -> DateTime<Utc>;
+
 #[derive(Clone)]
 pub struct Entry {
     pub note: String,
     pub date: DateTime<Utc>,
     pub duration: Duration,
-    mod_stack: Vec<fn(&DateTime<Utc>, &DateTime<Utc>) -> DateTime<Utc>>,
+    mod_stack: Vec<DateMod>,
 }
 
 impl Entry {
     /// Tries to create a version of this Entry with a date laying in the future of the given now value using the available wildcards
     /// returns true if modifying the internal state to future worked
     pub fn resolve_wildcards(&mut self, now: DateTime<Utc>, duration: &mut Duration) -> bool {
-        while self.mod_stack.len() > 0 {
+        while !self.mod_stack.is_empty() {
             let time_mod = self.mod_stack.pop().unwrap();
             let new_date = time_mod(&self.date, &now);
 
@@ -27,7 +29,6 @@ impl Entry {
     }
 
     pub fn from_string(data: &str, now: &DateTime<Utc>) -> Result<Entry, Box<dyn Error>> {
-        type DateMod = fn(&DateTime<Utc>, &DateTime<Utc>) -> DateTime<Utc>;
         let mut parts = data.split_whitespace();
         let mut date_string = String::new();
         let mut wildcard_offset = Vec::<DateMod>::new();
@@ -91,7 +92,7 @@ impl Entry {
                     "*" => {
                         date_string.push_str(&format!("{}", now.format("%d")));
                         wildcard_offset.push(|date: &DateTime<Utc>, _: &DateTime<Utc>| {
-                            let ndate = date.clone();
+                            let ndate = *date;
                             ndate.checked_add_signed(Duration::days(1)).unwrap()
                         });
                     }
@@ -108,7 +109,7 @@ impl Entry {
                     "*" => {
                         date_string.push_str(&format!("{}", now.format("%W")));
                         wildcard_offset.push(|date: &DateTime<Utc>, _: &DateTime<Utc>| {
-                            let ndate = date.clone();
+                            let ndate = *date;
                             ndate.checked_add_signed(Duration::weeks(1)).unwrap()
                         });
                     }
@@ -123,7 +124,7 @@ impl Entry {
                     "*" => {
                         date_string.push_str(&format!("{}", now.format("%a")));
                         wildcard_offset.push(|date: &DateTime<Utc>, _: &DateTime<Utc>| {
-                            let ndate = date.clone();
+                            let ndate = *date;
                             ndate.checked_add_signed(Duration::days(1)).unwrap()
                         });
                     }
@@ -135,12 +136,12 @@ impl Entry {
 
         // Time with %R (e.g. 16:35)
         if let Some(entry) = parts.next() {
-            let mut time = entry.split(":");
+            let mut time = entry.split(':');
             let hours = if let Some(hours) = time.next() {
                 match hours {
                     "*" => {
                         wildcard_offset.push(|date: &DateTime<Utc>, _: &DateTime<Utc>| {
-                            let ndate = date.clone();
+                            let ndate = *date;
                             ndate.checked_add_signed(Duration::hours(1)).unwrap()
                         });
                         format!("{}", now.format("%H"))
@@ -155,7 +156,7 @@ impl Entry {
                 match minutes {
                     "*" => {
                         wildcard_offset.push(|date: &DateTime<Utc>, _: &DateTime<Utc>| {
-                            let ndate = date.clone();
+                            let ndate = *date;
                             ndate.checked_add_signed(Duration::minutes(1)).unwrap()
                         });
                         format!("{}", now.format("%M"))
@@ -204,7 +205,7 @@ impl Entry {
             note: note.unwrap_or("No Note").to_string(),
             date,
             mod_stack: wildcard_offset,
-            duration: duration,
+            duration,
         })
     }
 }
